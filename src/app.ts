@@ -11,8 +11,8 @@ import {MessageResponse} from './types/Messages';
 
 const app = express();
 
-app.use(morgan('dev'));
-app.use(helmet());
+app.use(morgan('dev')); // näyttää http koodit
+app.use(helmet()); // poistaa palvelimen vastauksista headereita (tietoturva)
 app.use(cors());
 app.use(express.json());
 
