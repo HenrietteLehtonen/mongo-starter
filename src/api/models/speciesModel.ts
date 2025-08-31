@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import {Species} from '../../types/DBTypes';
+import {Species, SpeciesModel} from '../../types/DBTypes';
+import {Polygon} from 'geojson';
 
 const speciesSchema = new mongoose.Schema<Species>({
   species_name: {
@@ -11,6 +12,7 @@ const speciesSchema = new mongoose.Schema<Species>({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
+    ref: 'Category',
   },
   location: {
     type: {
@@ -30,4 +32,16 @@ const speciesSchema = new mongoose.Schema<Species>({
   },
 });
 
-export default mongoose.model<Species>('Species', speciesSchema);
+// static method to find all species within a certain area by geoJson polygon
+
+speciesSchema.statics.findByArea = function (polygon: Polygon) {
+  return this.find({
+    location: {
+      $geoWithin: {
+        $geometry: polygon,
+      },
+    },
+  });
+};
+
+export default mongoose.model<Species, SpeciesModel>('Species', speciesSchema);
